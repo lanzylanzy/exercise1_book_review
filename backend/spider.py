@@ -66,7 +66,7 @@ def search_db_subject_details(db_url):
         eng_count = sum(1 for c in text if c.isascii() and c.isalpha())
         return eng_count / len(text) > 0.5  # 50%以上是英文字母
     
-    #【提取英文版书籍的url】若没有英文版，则返回""
+    #【提取英文版书籍的url】若没有英文版，则返回False
     en_version_url = False
     other_versions = selector.css('li.mb8.pl')
     #遍历所有其他版本，直到找到英文版
@@ -78,7 +78,7 @@ def search_db_subject_details(db_url):
         title_text = a_tag.xpath('text()').get(default='').strip()
         title_text = re.sub(r'\s*[（(]\d{4}[）)]$', '', title_text).strip()
         if is_english(title_text):            
-            en_version_url = a_tag.xpath('@href').get(default='').strip()# 是英文，提取链接
+            en_version_url = a_tag.xpath('@href').get(default='').strip() or None# 是英文，提取链接
             break  # 找到第一个英文版就停止
 
     return  db_book_info,en_version_url
@@ -166,7 +166,7 @@ def search_gr_info(isbn):
             "author":selector.xpath("normalize-space(//a[contains(@class,'ContributorLink')]/span[@data-testid='name']/text())").get(default=''),
             "published_date":selector.xpath("normalize-space(substring-after(//p[@data-testid='publicationInfo']/text(), 'published '))").get(default=''),
             #intr的换行问题还未处理
-            "intr" :selector.xpath("string(//span[@class='Formatted'])").get().replace("<br>", "\n").replace("&nbsp;", " ").strip(),
+            "intr" :selector.xpath("string(//span[@class='Formatted'])").get().replace("<br>", "\n").replace("&nbsp;", " ").strip() or None,
             "score":selector.xpath("normalize-space(//div[contains(@class,'RatingStatistics__rating')]/text())").get() or "暂无评分",
             "rating":selector.xpath("normalize-space((//div[contains(@class,'RatingStatistics__meta')]""//span[@data-testid='ratingsCount']/text())[1])").get(default='') or "暂无评论人数",
         }

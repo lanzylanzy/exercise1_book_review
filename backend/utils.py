@@ -66,12 +66,12 @@ def extract_db_reviews(db_reviews_selector):
         content = comment_item.css('p.comment-content span.short::text').get()
         rating_class = comment_item.css('span.user-stars::attr(class)').get()
         review_score = int(re.search(r'\d+', rating_class).group()) / 10 if rating_class else None
-        date = comment_item.css('a.comment-time::text').get().strip().split(' ')[0]
+        date = (comment_item.css('a.comment-time::text').get() or '').strip().split(' ')[0] if comment_item.css('a.comment-time::text').get() else None
         #如果是没评分或没评论的则跳过。
         if review_score is None or not content:
             continue
         #评论的格式改一下，不用文本换行\n，而用网页格式<br>
-        content = content.replace('\n', '<br>').strip()
+        content = content.replace('\n', '<br>').strip() or None
         #分成好，中，差三组
         if review_score >= 4:
             comments.append(("good", content, review_score, date))
