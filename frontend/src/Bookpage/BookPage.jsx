@@ -2,6 +2,8 @@ import { useEffect, useState, useReducer } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import BookLayout from "./BookLayout";
+// utils/api.js 或 BookUtils.js 等
+const API_BASE = "https://your-django-api.onrender.com";
 
 //tab逻辑
 //tab初始状态
@@ -72,7 +74,11 @@ export default function BookPage() {
     //制作一个后端拉取gr信息的函数fetchgr，设置gr.success未null时每隔0.5s重新拉取数据，直到success
     const fetchGr = () => {
       axios
-        .get(`/api/book/gr?en_url=${encodeURIComponent(dbData.en_version_url)}`)
+        .get(
+          `${API_BASE}/api/book/gr?en_url=${encodeURIComponent(
+            dbData.en_version_url
+          )}`
+        )
         .then((res) => {
           const result = res.data.gr_result;
           setGrData(result);

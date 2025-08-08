@@ -7,6 +7,8 @@ import { useEffect } from "react";
 //用来发送http请求
 import axios from "axios";
 import SearchLayout from "./SearchLayout";
+// utils/api.js 或 BookUtils.js 等
+const API_BASE = "https://your-django-api.onrender.com";
 
 //定义一个react组件
 //输入关键词后调用后端/api/book/db/?q=？,并返回db的数据，判断。成功则跳转。
@@ -40,7 +42,7 @@ function SearchPage() {
       //用axios发送get请求到后端api，await 表示这里是异步的，等请求返回后再继续往下执行
       const res = await axios.get(
         //encodeURIComponent() 把关键词转成 URL 编码，防止中文或空格出错
-        `/api/book/db/?q=${encodeURIComponent(query)}`
+        `${API_BASE}/api/book/db/?q=${encodeURIComponent(query)}`
       );
       //从返回的数据中提取db_result
       const dbResult = res.data.db_result;
