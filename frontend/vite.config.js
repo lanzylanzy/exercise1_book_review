@@ -7,7 +7,7 @@ export default defineConfig({
     host: "0.0.0.0", // ✅ 添加这行以允许手机访问
     proxy: {
       "/api": {
-        target: "http://localhost:8000",
+        target: "https://book-backend.onrender.com",
         changeOrigin: true,
       },
     },
