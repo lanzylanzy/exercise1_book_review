@@ -3,7 +3,7 @@ import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import BookLayout from "./BookLayout";
 // utils/api.js 或 BookUtils.js 等
-const API_BASE = "https://exercise1-book-review.onrender.com/";
+const API_BASE = "https://exercise1-book-review.onrender.com";
 
 //tab逻辑
 //tab初始状态
