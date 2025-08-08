@@ -53,6 +53,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ALLOWED_ORIGINS = [
+    "https://exercise1-book-review.vercel.app",  # 你的前端地址
+]
 
 
 ROOT_URLCONF = 'config.urls'

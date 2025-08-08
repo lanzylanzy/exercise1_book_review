@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import SearchLayout from "./SearchLayout";
 // utils/api.js 或 BookUtils.js 等
-const API_BASE = "https://exercise1-book-review.onrender.com/";
+const API_BASE = "https://exercise1-book-review.onrender.com";
 
 //定义一个react组件
 //输入关键词后调用后端/api/book/db/?q=？,并返回db的数据，判断。成功则跳转。
