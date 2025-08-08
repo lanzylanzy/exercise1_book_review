@@ -1,91 +1,104 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useEffect, useState, useReducer } from "react";
 import axios from "axios";
+import { useLocation, useNavigate } from "react-router-dom";
+import BookLayout from "./BookLayout";
 
-function HelloPage() {
-  return (
-    <div>
-      <p>你好，这是一个测试页面。</p>
-    </div>
-  );
+//tab逻辑
+//tab初始状态
+const initialState = {
+  activeTab: "douban", // 默认豆瓣
+  //滚轮参数
+  scrollPositions: {
+    douban: 0,
+    goodreads: 0,
+  },
+};
+// 关于tap的reducer函数，专门处理状态更新逻辑
+function reducer(state, action) {
+  switch (action.type) {
+    case "SET_TAB":
+      return {
+        ...state,
+        activeTab: action.payload.tab,
+        scrollPositions: {
+          ...state.scrollPositions,
+          [state.activeTab]: action.payload.prevScroll, // 保存当前 tab 的滚动位置
+        },
+      };
+    default:
+      return state;
+  }
+}
+//弹窗初始函数
+const modalInitial = {
+  isOpen: false,
+  modalText: "",
+};
+
+function modalReducer(state, action) {
+  switch (action.type) {
+    case "SHOW_MODAL":
+      return { isOpen: true, modalText: action.payload };
+    case "HIDE_MODAL":
+      return { isOpen: false, modalText: "" };
+    default:
+      return state;
+  }
 }
 
-export default HelloPage;
-
-/*
-function BookPage() {
-  //把函数功能实体化
-  //提取本地数据的函数
+export default function BookPage() {
+  //初始化两个hook，即两个react的aip，允许用户使用一些功能
   const location = useLocation();
-  //跳转网页的函数
   const navigate = useNavigate();
-
-  // 拿到search页传递的db数据
-  const dbData = location.state?.dbData;
-
-  // 2️⃣ 防止用户直接访问 /book?q=xxx 而没有 dbData
-  if (!dbData) {
-    return (
-      <div>
-        <p>数据已丢失，请返回首页重新搜索。</p>
-        <button onClick={() => navigate("/")}>返回首页</button>
-      </div>
-    );
-  }
-
-  // 3️⃣ 准备 Goodreads 相关状态
+  // 从上一页拿豆瓣数据
+  const dbData = JSON.parse(localStorage.getItem("dbData"));
+  //从上一页拿query数据
+  const query = localStorage.getItem("query");
+  // 增加Goodreads 数据状态变量
   const [grData, setGrData] = useState(null);
-  const [grLoading, setGrLoading] = useState(true);
-  const [grError, setGrError] = useState(null);
+  // 使用useReducer来管理 tab 切换状态
+  const [state, dispatch] = useReducer(reducer, initialState);
+  //使用reducer管理弹窗
+  const [modalState, modalDispatch] = useReducer(modalReducer, modalInitial);
 
-  // 4️⃣ 发起 GR 请求（可重复刷新）
-  const fetchGrData = async () => {
-    try {
-      const res = await axios.get(`/api/book/gr/?q=${dbData.en_version_isbn}`);
-      const result = res.data.gr_result;
-      setGrData(result);
-      setGrLoading(result.success === null); // 如果没抓完就继续 loading
-    } catch (err) {
-      console.error("Goodreads 请求失败:", err);
-      setGrError("Goodreads 加载失败，请稍后重试");
-      setGrLoading(false);
-    }
+  //定义返回上一页的函数
+  const handleBack = () => {
+    navigate("/"); // 或者用 window.history.back()
   };
 
-  // 5️⃣ 页面加载时先请求一次 GR
+  //useEffect是react常用的一个副作用，即页面加载后执行某段逻辑
+  // 页面加载后，请求 Goodreads
   useEffect(() => {
+    //制作一个后端拉取gr信息的函数fetchgr，设置gr.success未null时每隔0.5s重新拉取数据，直到success
+    const fetchGr = () => {
+      axios
+        .get(`/api/book/gr?en_url=${encodeURIComponent(dbData.en_version_url)}`)
+        .then((res) => {
+          const result = res.data.gr_result;
+          setGrData(result);
+
+          // 如果还没成功，就等 0.5 秒再拉一次
+          if (result.success === null) {
+            setTimeout(fetchGr, 500);
+          }
+        });
+    };
+    //如果en_version_url存在，即执行拉取函数
     if (dbData?.en_version_url) {
-      fetchGrData();
+      fetchGr();
     }
-  }, [dbData]);
-
-  // 6️⃣ 如果 GR 没成功提取，1 秒后刷新一次
-  useEffect(() => {
-    if (grData && grData.success === null) {
-      const timer = setTimeout(() => {
-        fetchGrData();
-      }, 300);
-      return () => clearTimeout(timer);
-    }
-  }, [grData]);
-
-  // 7️⃣ 页面初步渲染测试
+  }, [dbData?.en_version_url]); //此函数依赖于en_version_url，即en_version_url更新时就重新执行
   return (
-    <div>
-      <h2>豆瓣数据</h2>
-      <p>书名：{dbData.title}</p>
-
-      <h2>Goodreads 数据</h2>
-      {grLoading && <p>正在加载 Goodreads 数据...</p>}
-      {grError && <p>{grError}</p>}
-      {grData && grData.success && (
-        <div>
-          <p>英文书名：{grData.gr_book_info.title}</p>
-        </div>
-      )}
-    </div>
+    <BookLayout
+      dbData={dbData}
+      grData={grData}
+      activeTab={state.activeTab}
+      scrollPositions={state.scrollPositions}
+      dispatch={dispatch}
+      modalState={modalState}
+      modalDispatch={modalDispatch}
+      onBack={handleBack}
+      query={query}
+    />
   );
 }
-
-export default BookPage;
-*/

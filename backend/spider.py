@@ -1,13 +1,16 @@
 import requests
 import re
 from parsel import Selector
+import base64
 
 from backend.utils import (search_elements_db,
                            extract_db_reviews,
                            extract_db_reviews,
                            search_elements_gr,
                            extract_gr_reviews,
-                           search_review_gr)
+                           search_review_gr,
+                           session,
+                           session_gr)
 
 # 用于通过书名在google引擎搜索的 API Key 和 CSE ID
 API_KEY = "AIzaSyCge0r4L3k2_9rY67wKwB1pT-yWWqbsF8Q"
@@ -42,7 +45,13 @@ def search_db_subject_url(query, num=1):
     else:
         raise ValueError("搜索结果中未能提取到豆瓣书籍页面链接") 
 
-
+#-用封面链接提取图片
+def fetch_image_as_base64_with_session(session, img_url):
+    response = session.get(img_url, timeout=10)  # headers 不用再传
+    if response.status_code == 200:
+        img_bytes = response.content
+        img_base64 = base64.b64encode(img_bytes).decode("utf-8")
+        return f"data:image/jpeg;base64,{img_base64}"
 
 #【豆瓣数据清洗】
 #-从详情页提取book_info(包括本书info，英文版详情页的url)
@@ -58,6 +67,13 @@ def search_db_subject_details(db_url):
         "score":(selector.css('strong.rating_num::text').get() or '').strip() or None,
         "rating":(selector.css('span[property="v:votes"]::text').get() or '').strip() or None,
         }
+    #提取img并加入book info
+    if db_book_info["img_url"]:
+        db_book_info["img"] = fetch_image_as_base64_with_session(
+        session, db_book_info["img_url"]
+        )
+    else:
+        db_book_info["img"] = None
 
     #创建一个判断是否为英文名字的函数
     def is_english(text):
@@ -170,6 +186,14 @@ def search_gr_info(isbn):
             "score":selector.xpath("normalize-space(//div[contains(@class,'RatingStatistics__rating')]/text())").get() or "暂无评分",
             "rating":selector.xpath("normalize-space((//div[contains(@class,'RatingStatistics__meta')]""//span[@data-testid='ratingsCount']/text())[1])").get(default='') or "暂无评论人数",
         }
+        #提取img并加入book info
+        if gr_book_info["img_url"]:
+            gr_book_info["img"] = fetch_image_as_base64_with_session(
+            session_gr, gr_book_info["img_url"]
+            )
+        else:
+            gr_book_info["img"] = None
+                    
         #提取书籍resourceID
         gr_details_text=selector.get()
         resourceID = re.search(r'kca://work/amzn1\.gr\.work\.v1\.[a-zA-Z0-9_-]+', gr_details_text)

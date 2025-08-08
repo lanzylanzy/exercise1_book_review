@@ -4,7 +4,7 @@ import threading
 from collections import OrderedDict
 
 #临时缓存
-gr_cache = {}
+gr_cache = OrderedDict()
 gr_lock = threading.Lock()
 MAX_CACHE_SIZE = 10
 
