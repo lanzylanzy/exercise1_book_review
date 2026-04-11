@@ -12,38 +12,40 @@ from backend.utils import (search_elements_db,
                            session,
                            session_gr)
 
-# 用于通过书名在google引擎搜索的 API Key 和 CSE ID
-API_KEY = "AIzaSyCge0r4L3k2_9rY67wKwB1pT-yWWqbsF8Q"
-CSE_ID = "81569e7d7abc249b8"
-
-#用书名在谷歌搜索，提取结果中豆瓣书籍详情页的url
+API_KEY = "BSAm9gAi0CIDjGtIxSxYZW6qo4a7pj4"
 def search_db_subject_url(query, num=1):
-    #谷歌搜索固定url，和搜索需要的关键词
-    url = "https://www.googleapis.com/customsearch/v1"
-    params = {
-        "q": query,
-        "key": API_KEY,
-        "cx": CSE_ID,
-        "num": num
+    # Brave 搜索 API
+    url = "https://api.search.brave.com/res/v1/web/search"
+    headers = {
+        "Accept": "application/json",
+        "X-Subscription-Token": API_KEY
     }
-    #提取搜索结果，若失败则报错对应代码
-    response = requests.get(url, params=params)
+    params = {
+        "q": f"{query} site:book.douban.com subject",
+        "count": num
+    }
+    # 请求 API
+    response = requests.get(url, headers=headers, params=params)
+
     if response.status_code != 200:
-         raise ValueError(f"请求失败: {response.status_code} - {response.text}")
-    #从搜索结果的josn中，提取页面链接
+        raise ValueError(f"请求失败: {response.status_code} - {response.text}")
+
+    # 解析 JSON，找到所有搜索结果的网络连接
     data = response.json()
-    items = data.get("items") 
-    #如果搜索不到任何页面，则报错
+    items = data.get("web", {}).get("results")
+
     if not items:
-         raise ValueError("找不到相关书籍，建议完善关键词，如输入作者、出版年份等") 
-    #从所有的页面连接中，提取书籍主页面链接的代码
-    link = data["items"][0].get("link")
-    subject_link= re.search(r"https://book\.douban\.com/subject/\d+/", link)
-    #增加一个无法提取的报错
+        raise ValueError("找不到相关书籍，建议完善关键词，如输入作者、出版年份等")
+
+    # 提取豆瓣 subject 链接
+    link = items[0].get("url")
+
+    subject_link = re.search(r"https://book\.douban\.com/subject/\d+/", link)
+
     if subject_link:
         return subject_link.group(0)
     else:
-        raise ValueError("搜索结果中未能提取到豆瓣书籍页面链接") 
+        raise ValueError("搜索结果中未能提取到豆瓣书籍页面链接")
 
 #-用封面链接提取图片
 def fetch_image_as_base64_with_session(session, img_url):

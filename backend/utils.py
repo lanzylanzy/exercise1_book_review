@@ -4,7 +4,7 @@ import parsel
 import re
 import time
 import datetime
-
+import requests
 
 #制作用于豆瓣爬虫的headers,无cookies
 def create_douban_session() -> requests.Session:
@@ -28,10 +28,10 @@ def create_douban_session() -> requests.Session:
             "https://www.douban.com/group/",
         ]), 
         })
-    sess.cookies.update({
-        "dbcl2": "181853562:Jg3hvQpQ+Ek",   
-        "ck": "ejDJ",          
-        })
+    # sess.cookies.update({
+    #      "dbcl2": "181853562:Jg3hvQpQ+Ek",   
+    #      "ck": "ejDJ",          
+    #     })
     return sess
 #每次搜索创建一个固定session
 session=create_douban_session()
