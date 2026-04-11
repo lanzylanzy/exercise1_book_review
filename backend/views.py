@@ -34,15 +34,27 @@ def db_info_view(request):
     query = request.GET.get("q")
     #无关键词，报错
     if not query:
-        db_result["sucess"]="请输入关键词"
+        db_result["success"]="请输入关键词"
         db_result["error"] = "请输入关键词"
         return JsonResponse({
             "db_result": db_result,
             "gr_result": gr_result
         }, status=200, json_dumps_params={'ensure_ascii': False})
+    try:
+         #开始通过谷歌爬取豆瓣信息（如果搜所无结果，在service.py中已打包完报错机制）
+        db_result = pack_db_info(query)
+    except Exception as e:
+        db_result["success"] = "请输入关键词"
+        db_result["error"] = f"豆瓣数据获取失败：{str(e)}"
+        return JsonResponse({
+            "db_result": db_result,
+            "gr_result": gr_result
+        }, status=200, json_dumps_params={"ensure_ascii": False})
+
+    en_url = db_result.get("en_version_url")
+
+   
     
-    #开始通过谷歌爬取豆瓣信息（如果搜所无结果，在service.py中已打包完报错机制）
-    db_result= pack_db_info(query)
     #如果没有en_url，在service.py中已打包完报错机制，isbn会等于false
     en_url = db_result["en_version_url"]
     if not en_url:
