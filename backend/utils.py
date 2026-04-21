@@ -28,10 +28,9 @@ def create_douban_session() -> requests.Session:
             "https://www.douban.com/group/",
         ]), 
         })
-    # sess.cookies.update({
-    #      "dbcl2": "181853562:Jg3hvQpQ+Ek",   
-    #      "ck": "ejDJ",          
-    #     })
+    sess.proxies = {
+    "http": "http://ojxugaqm:sf0a77upbjcp@31.59.20.176:6754",
+    }
     return sess
 #每次搜索创建一个固定session
 session=create_douban_session()
