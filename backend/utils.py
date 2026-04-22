@@ -6,6 +6,7 @@ import time
 import datetime
 import requests
 
+proxy = "http://mr1313993FSH:MsjIffcbK5@ultra.marsproxies.com:44443"
 #制作用于豆瓣爬虫的headers,无cookies
 def create_douban_session() -> requests.Session:
     sess = requests.Session()
@@ -29,7 +30,8 @@ def create_douban_session() -> requests.Session:
         ]), 
         })
     sess.proxies = {
-    "http": "http://ojxugaqm:sf0a77upbjcp@31.59.20.176:6754",
+    "http": proxy,
+    "https": proxy,
     }
     return sess
 #每次搜索创建一个固定session
