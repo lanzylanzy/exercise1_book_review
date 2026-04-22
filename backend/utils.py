@@ -6,7 +6,7 @@ import time
 import datetime
 import requests
 
-proxy = "http://mr1313993FSH:MsjIffcbK5@ultra.marsproxies.com:44443"
+proxy = "http://mr1313993FSH:MsjIffcbK5_country-hk@ultra.marsproxies.com:44443"
 #制作用于豆瓣爬虫的headers,无cookies
 def create_douban_session() -> requests.Session:
     sess = requests.Session()
