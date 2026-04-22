@@ -42,7 +42,7 @@ function SearchPage() {
       //用axios发送get请求到后端api，await 表示这里是异步的，等请求返回后再继续往下执行
       const res = await axios.get(
         //encodeURIComponent() 把关键词转成 URL 编码，防止中文或空格出错
-        `${API_BASE}/book/db/?q=${encodeURIComponent(query)}`,
+        `${API_BASE}/api/book/db/?q=${encodeURIComponent(query)}`,
       );
       //从返回的数据中提取db_result
       const dbResult = res.data.db_result;
