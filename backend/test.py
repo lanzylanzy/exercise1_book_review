@@ -9,20 +9,20 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
-# import requests
+import requests
 
-# proxy = "http://mr1313993FSH:MsjIffcbK5@ultra.marsproxies.com:44443"
+proxy = "http://mr1313993FSH:MsjIffcbK5_country-hk@ultra.marsproxies.com:44443"
 
 
 
-# proxies = {
-#     "http": proxy,
-#     "https": proxy,
-# }
+proxies = {
+    "http": proxy,
+    "https": proxy,
+}
 
-# r = requests.get("https://api.ipify.org", proxies=proxies, timeout=10)
+r = requests.get("https://api.ipify.org", proxies=proxies, timeout=10)
 
-# print(r.text)
+print(r.text)
 
 
 
