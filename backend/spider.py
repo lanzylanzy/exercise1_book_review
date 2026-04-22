@@ -3,16 +3,7 @@ import re
 from parsel import Selector
 import base64
 
-# from backend.utils import (search_elements_db,
-#                            extract_db_reviews,
-#                            extract_db_reviews,
-#                            search_elements_gr,
-#                            extract_gr_reviews,
-#                            search_review_gr,
-#                            session,
-#                            session_gr)
-
-from utils import (search_elements_db,
+from backend.utils import (search_elements_db,
                            extract_db_reviews,
                            extract_db_reviews,
                            search_elements_gr,
@@ -20,6 +11,15 @@ from utils import (search_elements_db,
                            search_review_gr,
                            session,
                            session_gr)
+
+# from utils import (search_elements_db,
+#                            extract_db_reviews,
+#                            extract_db_reviews,
+#                            search_elements_gr,
+#                            extract_gr_reviews,
+#                            search_review_gr,
+#                            session,
+#                            session_gr)
 
 API_KEY = "BSAm9gAi0CIDjGtIxSxYZW6qo4a7pj4"
 def search_db_subject_url(query, num=1):

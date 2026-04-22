@@ -31,13 +31,13 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 #用名称搜索豆瓣详情页url
 #为了省api次数，测试时候先不用谷歌搜索
-# db_subject_url=search_db_subject_url("小狗钱钱")
-# print(db_subject_url)
+db_subject_url=search_db_subject_url("小狗钱钱")
+print(db_subject_url)
 
-# #爬取豆瓣详情页相关信息，包括英文版url
-# db_book_info, en_url=search_db_subject_details(db_subject_url)
-# print(db_book_info)
-# print(en_url)
+#爬取豆瓣详情页相关信息，包括英文版url
+db_book_info, en_url=search_db_subject_details(db_subject_url)
+print(db_book_info)
+print(en_url)
 # #爬取豆瓣详情页isbn
 # en_version_isbn=search_db_subject_isbn(en_url)
 # print(en_version_isbn)
