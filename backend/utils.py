@@ -123,7 +123,7 @@ def search_review_gr(resourceID,ratingMin,ratingMax):
     sess=requests.session()
     sess.headers.update({
         "Content-Type": "application/json",
-        "x-api-key": "da2-xpgsdydkbregjhpr6ejzqdhuwy",  # 抓包获得的 key
+        "x-api-key": "da2-d2fyuybwsbf3poyquvbp2mbiwu",  # 抓包获得的 key
         "User-Agent": "Mozilla/5.0",
         "Referer": "https://www.goodreads.com/",
         "Origin": "https://www.goodreads.com"
