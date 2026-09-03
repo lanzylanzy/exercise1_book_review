@@ -1,5 +1,9 @@
-from django.http import JsonResponse
+import os
+
+from django.http import HttpResponse, JsonResponse
 from backend.service import pack_db_info, pack_gr_info
+from backend.spider import search_db_subject_url
+from backend.utils import session
 import threading
 from collections import OrderedDict
 
@@ -7,6 +11,29 @@ from collections import OrderedDict
 gr_cache = OrderedDict()
 gr_lock = threading.Lock()
 MAX_CACHE_SIZE = 10
+
+
+def debug_douban_raw(request):
+    token = request.GET.get("token")
+    expected_token = os.environ.get("DOUBAN_DEBUG_TOKEN")
+    if not expected_token or token != expected_token:
+        return JsonResponse({"error": "forbidden"}, status=403)
+
+    query = request.GET.get("q", "金融之王")
+    target = request.GET.get("target", "detail")
+    subject_url = search_db_subject_url(query)
+    if target == "comments":
+        subject_id = subject_url.rstrip("/").split("/")[-1]
+        url = f"https://book.douban.com/subject/{subject_id}/comments/?start=0&limit=20&status=P&sort=score"
+    else:
+        url = subject_url
+
+    response = session.get(url, timeout=15, verify=False)
+    return HttpResponse(
+        response.content,
+        content_type=response.headers.get("Content-Type", "text/html"),
+        status=response.status_code,
+    )
 
 
 
