@@ -1,5 +1,3 @@
-import os
-
 from django.http import HttpResponse, JsonResponse
 from backend.service import pack_db_info, pack_gr_info
 from backend.spider import search_db_subject_url
@@ -14,11 +12,6 @@ MAX_CACHE_SIZE = 10
 
 
 def debug_douban_raw(request):
-    token = request.GET.get("token")
-    expected_token = os.environ.get("DOUBAN_DEBUG_TOKEN")
-    if not expected_token or token != expected_token:
-        return JsonResponse({"error": "forbidden"}, status=403)
-
     query = request.GET.get("q", "金融之王")
     target = request.GET.get("target", "detail")
     subject_url = search_db_subject_url(query)
