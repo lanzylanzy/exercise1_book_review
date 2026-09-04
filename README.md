@@ -14,7 +14,7 @@
 
 ## 技术栈
 
-React、Tailwind CSS、Django、Requests、lxml、Parsel、Brave Search API、Goodreads GraphQL API、MarsProxies、Vercel、Render
+React、Tailwind CSS、Django、Requests、lxml、Parsel、Brave Search API、Goodreads GraphQL API、MarsProxies、 netlify、Render
 
 ## 数据流程
 
