@@ -11,6 +11,8 @@ A self initiated full stack web application to evaluate whether a book is worth 
 ## Tech Stack
 React, Tailwind CSS, Django, Web scraping & browser-based APIs
 
+## dataflow
+User Browser → Vercel Frontend → Render Backend → Proxy Pool → Proxy IP → Douban / Goodreads Detail & Review Pages → Render Parsing → Frontend
 ## Notes
 Uses free APIs and proxies; performance may be slower due to anti-scraping restrictions
 Prototype project, continuously improving data stability
