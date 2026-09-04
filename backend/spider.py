@@ -207,7 +207,7 @@ def search_gr_info(isbn):
                     
         #提取书籍resourceID
         gr_details_text=selector.get()
-        resourceID = re.search(r'kca://work/amzn1\.gr\.work\.v1\.[a-zA-Z0-9_-]+', gr_details_text)
+        resourceID = re.search(r'kca://work/amzn1\.gr\.work\.v\d+\.[a-zA-Z0-9_-]+', gr_details_text)
         resourceID=resourceID.group(0)
         return gr_book_info,resourceID
 #【goodread数据清洗】
