@@ -55,6 +55,10 @@ export function ReviewRow({ reviews, title, onClick }) {
         <div className="flex space-x-4 pb-2">
           {reviews?.map((item, idx) => {
             const rev = Object.values(item)[0]; // 取出评论内容对象
+            const starCount = Math.max(
+              0,
+              Math.min(5, Math.round(Number(rev.review_score) || 0)),
+            );
             return (
               <div
                 key={idx}
@@ -66,7 +70,10 @@ export function ReviewRow({ reviews, title, onClick }) {
                   dangerouslySetInnerHTML={{ __html: rev.content }}
                 ></p>
                 <div className="text-sm text-gray-500 mt-auto">
-                  评分 {rev.review_score ?? "-"} ⭐ · {rev.date}
+                  <span aria-label={`${starCount}颗星`}>
+                    {"⭐".repeat(starCount)}
+                  </span>
+                  {rev.date && ` · ${rev.date}`}
                 </div>
               </div>
             );
