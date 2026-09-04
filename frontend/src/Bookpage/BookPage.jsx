@@ -76,8 +76,8 @@ export default function BookPage() {
       axios
         .get(
           `${API_BASE}/api/book/gr?en_url=${encodeURIComponent(
-            dbData.en_version_url
-          )}`
+            dbData.en_version_url,
+          )}`,
         )
         .then((res) => {
           const result = res.data.gr_result;
@@ -87,6 +87,14 @@ export default function BookPage() {
           if (result.success === null) {
             setTimeout(fetchGr, 500);
           }
+        })
+        .catch((error) => {
+          setGrData({
+            success: false,
+            error:
+              error.response?.data?.gr_result?.error ||
+              "Goodreads 数据加载失败",
+          });
         });
     };
     //如果en_version_url存在，即执行拉取函数
