@@ -1,19 +1,20 @@
-## Overview
+```md
+## 项目简介
 
-A self initiated full stack web application to evaluate whether a book is worth reading by aggregating ratings, reader counts, and reviews across platforms.
-由于用了vercle和react的云服务部署，在国内需要使用魔法打开。项目最麻烦的其实在于，用国内部署就无法打开goodread，用国外部署又无法打开豆瓣，目前的方案是依然用国外免费服务器部署，但是爬豆瓣的时候用了香港的ip池做转接，全程免费，只是不能大量使用。
+个人开发的全栈书评聚合网站，通过汇总中英文图书社区的评分、评分人数和评论，帮助用户更快判断一本书是否值得阅读。
+落地的主要难点其实是部署平台和ip，为了能同时访问豆瓣和goodread，中间需要转接很多次。由于免费服务和代理资源限制，不适合高并发或大规模访问，且大陆使用时可能需要魔法。
 
-## Features
-- Aggregates data from Chinese and English book communities  
-- Automatically classifies reviews into positive and negative; Douban currently lacks this feature and primarily orders reviews by time, making it difficult to identify critical feedback for highly rated books  
-- Highlights reader count as a key metric alongside ratings  
-- Enables fast cross-platform comparison for decision making  
+## 主要功能
 
-## Tech Stack
-React, Tailwind CSS, Django, Web scraping & browser-based APIs
+- 聚合豆瓣与goodreads图书社区的数据
+- 分别显示正面和负面评论
+- 除评分外，将评分人数作为重要参考指标
+- 支持同一本书在不同平台之间快速对比
 
-## dataflow
-User Browser → Vercel Frontend → Render Backend → Brave Search API →  MarsProxies Proxy Pool → Hong Kong Proxy IP → Douban / Goodreads Detail & Review Pages → Render Parsing → JSON  → response Frontend
-## Notes
-Uses free APIs and proxies; performance may be slower due to anti-scraping restrictions
-Prototype project, continuously improving data stability
+## 技术栈
+
+React、Tailwind CSS、Django、Requests、lxml、Parsel、Brave Search API、Goodreads GraphQL API、MarsProxies、Vercel、Render
+
+## 数据流程
+
+用户浏览器发送请求 → netlify前端 → Render后端 → 调用Brave浏览器的搜索API，获取对应书籍的豆瓣详情页url →通过 MarsProxies 香港代理 IP 转发请求（海外服务器无法直接访问豆瓣）→ 爬取豆瓣信息，同时查询本书外文版isbn → 获取goodread信息 → 整理为JSON  → netlify前端展示
