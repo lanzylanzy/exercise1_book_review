@@ -14,7 +14,11 @@
 
 ## 技术栈
 
-React、Tailwind CSS、Django、Requests、lxml、Parsel、Brave Search API、Goodreads GraphQL API、MarsProxies、 netlify、Render
+**前端：** React、Tailwind CSS  
+**后端：** Django、Requests  
+**数据解析：** lxml、Parsel  
+**外部 API 与代理：** Brave Search API、Goodreads GraphQL API、MarsProxies  
+**部署：** Netlify、Render
 
 ## 数据流程
 
