@@ -67,6 +67,10 @@ def pack_gr_info(en_version_url):
     #提取书籍详情信息
     try:
         gr_book_info, resourceID = search_gr_info(en_version_isbn)
+        try:
+            gr_book_info["score"] = float(gr_book_info["score"]) * 2
+        except (KeyError, TypeError, ValueError):
+            pass
         gr_result["gr_book_info"]=gr_book_info
         #有isbn但没提取到，报错并终止
         if not gr_book_info or not resourceID:
