@@ -19,3 +19,8 @@ node_modules/
 # 忽略编译结果
 build/
 dist/
+
+#忽略缓存
+backend/
+__pycache__/
+*.pyc

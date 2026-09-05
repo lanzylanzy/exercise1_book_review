@@ -68,6 +68,7 @@ def fetch_image_as_base64_with_session(session, img_url):
 #-从详情页提取book_info(包括本书info，英文版详情页的url)
 def search_db_subject_details(db_url):
     selector = search_elements_db(db_url)
+    rating_raw = (selector.css('span[property="v:votes"]::text').get() or '').strip()
     #【提取该书籍的基本信息】没有则返回none
     db_book_info={
         "title":(selector.xpath('//title/text()').get() or '').strip() or None,
@@ -76,7 +77,8 @@ def search_db_subject_details(db_url):
         "published_date": (selector.xpath('normalize-space(//span[@class="pl" and contains(text(),"出版年")]/following-sibling::text())').get() or '').strip() or None,
         "intr" :'\n'.join(p.strip() for p in Selector(text=(selector.css('span.all.hidden div.intro').get() or selector.css('div.intro').get() or '')).css('p::text').getall() if p.strip()) or None,
         "score":(selector.css('strong.rating_num::text').get() or '').strip() or None,
-        "rating":(selector.css('span[property="v:votes"]::text').get() or '').strip() or None,
+        #豆瓣爬到的是纯数字字符串，加千位分隔符和goodreads的展示格式对齐
+        "rating": f"{int(rating_raw):,}" if rating_raw.isdigit() else (rating_raw or None),
         }
     #提取img并加入book info
     if db_book_info["img_url"]:
