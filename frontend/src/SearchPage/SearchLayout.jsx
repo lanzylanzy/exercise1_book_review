@@ -44,17 +44,11 @@ export default function SearchLayout({
           </p>
           {/* 英文提示 */}
           <p className="text-lg text-gray-500 leading-relaxed mt-2">
-            Enter the chinese book title. For better results, you can also
-            include the author, publisher, or publication year.
+            搜索需要10s左右
           </p>
 
           {/* 示例 */}
-          <p className="text-sm text-gray-400 mt-2">e.g. 小狗钱钱</p>
-
-          {/* 等待提示 */}
-          <p className="text-sm text-gray-400 mt-1">
-            Note: Due to web scraping, the search may take around 20–30 seconds.
-          </p>
+          <p className="text-sm text-gray-400 mt-2">搜索案例：小狗钱钱</p>
         </div>
         {/* 正在loading的标识*/}
         {isLoading && (
