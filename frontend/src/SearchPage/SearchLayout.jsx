@@ -40,13 +40,8 @@ export default function SearchLayout({
         <div>
           {/* 顶部输入提示 */}
           <p className="text-lg text-gray-600 leading-relaxed">
-            请输入书籍名称，为了精准定位,可输入作者、出版社、出版年份等信息。
+            请输入书籍名称，为了精准定位,可输入作者、出版社、出版年份等信息。搜索需要10s左右
           </p>
-          {/* 英文提示 */}
-          <p className="text-lg text-gray-500 leading-relaxed mt-2">
-            搜索需要10s左右
-          </p>
-
           {/* 示例 */}
           <p className="text-sm text-gray-400 mt-2">搜索案例：小狗钱钱</p>
         </div>
