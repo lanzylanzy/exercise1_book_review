@@ -104,19 +104,35 @@ def create_gr_session():
     }
 
     sess.headers.update(headers)
+    sess.proxies = {
+        "http": proxy,
+        "https": proxy,
+    }
     return sess
 #每次搜索创建一个固定session
 session_gr=create_gr_session()
-#gr通用爬虫
-def search_elements_gr(url, div_selector=None, verify=False, timeout=10):
-    resp = session_gr.get(url, timeout=timeout, verify=verify)
-    resp.raise_for_status()
-    selector = parsel.Selector(resp.text)
-    if div_selector:
-        elements = selector.css(div_selector)
-        return elements
-    else:
-        return selector
+#gr通用爬虫（Goodreads有AWS WAF机器人验证，短时间内连续请求会被拦截，加退避重试缓解）
+def search_elements_gr(url, div_selector=None, verify=False, timeout=10, max_retries=3, backoff_seconds=2.5):
+    last_error = None
+    for attempt in range(max_retries):
+        #命中过WAF后，等待时间随重试次数递增，而非固定短延时
+        time.sleep(backoff_seconds * (attempt + 1) + random.uniform(0, 0.5))
+        try:
+            resp = session_gr.get(url, timeout=timeout, verify=verify)
+            resp.raise_for_status()
+        except Exception as e:
+            last_error = e
+            continue
+        #命中AWS WAF的JS验证挑战页，视为本次失败，重试
+        if "AwsWafIntegration" in resp.text or "challenge-container" in resp.text:
+            last_error = RuntimeError("Goodreads 反爬验证拦截")
+            continue
+        selector = parsel.Selector(resp.text)
+        if div_selector:
+            return selector.css(div_selector)
+        else:
+            return selector
+    raise RuntimeError(f"search_elements_gr 请求失败，URL={url}，错误信息：{last_error}")
 #gr评论页爬虫（有固定session，通过非公开api）
 def search_review_gr(resourceID,ratingMin,ratingMax):
     url = "https://kxbwmqov6jgg3daaamb744ycu4.appsync-api.us-east-1.amazonaws.com/graphql"
